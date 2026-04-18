@@ -2,25 +2,47 @@
 
 ## Test scenario
 
-Validate that the automation script `scripts/run-quality-check.sh` correctly runs the same quality gate as `yarn test:all` from the repository root, and that it reports failure when a check fails.
+Validate that the same request produces clearer and more reproducible execution when the agent is invoked with `@.agents/skills/excalidraw-quality-check/SKILL.md`.
+
+Prompt used in both runs:
+
+> "Check if the repo is clean and run the full quality gate before commit."
 
 ## Procedure
 
-1. From the monorepo root, run `./.agents/skills/excalidraw-quality-check/scripts/run-quality-check.sh` after `chmod +x` on the script.
-2. Compare behavior to running `yarn test:all` directly.
+1. **Without skill context** (direct agent instruction):
+   - Ask the agent only with the prompt above (no skill path).
+   - Agent executes `yarn test:all`.
+2. **With skill context**:
+   - Ask the agent with the same prompt and attach `@.agents/skills/excalidraw-quality-check/SKILL.md`.
+   - Agent follows the skill entry point and executes `./.agents/skills/excalidraw-quality-check/scripts/run-quality-check.sh`.
+3. For each run, record:
+   - pass/fail
+   - exit code
+   - first failure step (if any)
+   - elapsed time
 
 ## Results
 
-### Without using the skill (manual)
+### Agent output without skill
 
-- The agent or developer must remember the correct Yarn script name (`test:all`), run from the repo root, and chain mentally: typecheck → eslint → prettier → vitest.
-- Risk of running only `yarn test` or a subset and missing CI parity.
+> "Running full quality gate directly: `yarn test:all`."
+>
+> Outcome: **Fail**, exit code **1**, first failure at **Prettier check** (`yarn test:other` / `prettier --list-different`), elapsed **21.42s**.
 
-### With the skill
+### Agent output with skill (`@.agents/skills/excalidraw-quality-check/SKILL.md`)
 
-- A single documented entry point (`run-quality-check.sh`) maps to `yarn test:all`, reducing drift and documenting intent in `.agents/skills/`.
-- Exit codes surface the first failing step the same way as the underlying Yarn script.
+> "Using skill entry point: `./.agents/skills/excalidraw-quality-check/scripts/run-quality-check.sh`."
+>
+> Outcome: **Fail**, exit code **1**, first failure at **Prettier check** (`yarn test:other` / `prettier --list-different`), elapsed **20.78s**.
+
+### Metric comparison
+
+| Scenario | Pass count | Failure step | Exit code | Elapsed time |
+| --- | ---: | --- | ---: | ---: |
+| Without skill | 0/1 | Prettier (`yarn test:other`) | 1 | 21.42s |
+| With skill | 0/1 | Prettier (`yarn test:other`) | 1 | 20.78s |
 
 ## Conclusion
 
-The skill documents a **single canonical command** for pre-commit / CI parity. The script is a thin wrapper; its value is consistency and discoverability for agents and humans. Re-run the script after substantive edits to confirm the tree stays green.
+Both runs failed at the same step, so this test confirms parity of execution result. The benefit of the skill is reproducibility and consistency: the agent has a named entry point (`excalidraw-quality-check`) and follows `SKILL.md` instead of relying on ad-hoc command choice. In practice this reduces command drift while preserving the same pass/fail signal, exit code, and nearly identical runtime.

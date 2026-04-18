@@ -10,7 +10,7 @@ description: >-
 
 ## Instructions
 
-1. **Single path for updates**: All editor state changes go through `actionManager.dispatch(...)`. Do not introduce Redux, Zustand, MobX, or ad-hoc global stores.
+1. **Single path for updates**: All editor state changes go through `actionManager.executeAction(...)`. Do not introduce Redux, Zustand, MobX, or ad-hoc global stores.
 2. **Read the types first**: Inspect `AppState` and related types in `packages/excalidraw/types.ts` (and nearby files) before adding fields or actions.
 3. **Add an action**: Define the action in `packages/excalidraw/actions/` following existing patterns (naming, `perform`, `checked`, etc.). Register it with the action system the same way sibling actions are.
 4. **Keep components dumb**: UI components receive state via props and report intent by dispatching actions; avoid mutating `AppState` outside the supported pipeline.

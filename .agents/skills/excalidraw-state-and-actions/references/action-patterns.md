@@ -5,7 +5,7 @@ Use this reference when implementing or debugging editor state changes.
 ## Defaults
 
 - Prefer existing actions over adding new ones.
-- Keep state changes inside `actionManager.dispatch(...)` flows.
+- Keep state changes inside `actionManager.executeAction(...)` flows.
 - Keep UI components as intent emitters (dispatch actions) + renderers (read props).
 
 ## Adding a new AppState field

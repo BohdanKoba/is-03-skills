@@ -21,15 +21,16 @@ with sync_playwright() as p:
     page.goto(url)
     page.wait_for_load_state('networkidle')
 
-    # Interact with the page (triggers console logs)
-    page.click('text=Dashboard')
-    page.wait_for_timeout(1000)
-
-    browser.close()
+# Interact with the page (triggers console logs)
+    try:
+        page.click('text=Dashboard', timeout=3000)
+        page.wait_for_timeout(1000)
+    except Exception as e:
+        print(f"Skipping Dashboard click: {e}")
 
 # Save console logs to file
-with open('/mnt/user-data/outputs/console.log', 'w') as f:
+with open(log_path, 'w') as f:
     f.write('\n'.join(console_logs))
 
 print(f"\nCaptured {len(console_logs)} console messages")
-print(f"Logs saved to: /mnt/user-data/outputs/console.log")
+print(f"Logs saved to: {log_path}")
