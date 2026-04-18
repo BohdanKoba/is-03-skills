@@ -63,8 +63,10 @@ excalidraw-monorepo/
 
 ## Skills
 
-<!-- Add your Agent Skills here during the workshop -->
+Agent skills live under `.agents/skills/<skill-name>/SKILL.md`. Each skill uses YAML frontmatter (`name`, `description`) and an **Instructions** section for steps the agent should follow.
 
-Available skills in this project:
-
-- **creating-excalidraw-components** (`.agents/skills/`) — Create React components following Excalidraw's patterns and conventions
+| Skill | Purpose |
+| ----- | ------- |
+| **creating-excalidraw-components** | New React UI in `packages/excalidraw/components/` (panels, dialogs, toolbar) with tests and project conventions. |
+| **excalidraw-quality-check** | Run the full quality gate via `scripts/run-quality-check.sh` (`yarn test:all`). Test write-up: `excalidraw-quality-check/TEST_REPORT.md`. |
+| **excalidraw-state-and-actions** | Work with `actionManager`, `AppState`, and actions under `packages/excalidraw/actions/` without external state libraries. Includes a small reference: `excalidraw-state-and-actions/references/action-patterns.md`. |
